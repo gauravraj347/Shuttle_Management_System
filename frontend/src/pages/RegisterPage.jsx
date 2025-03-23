@@ -107,7 +107,7 @@ const RegisterPage = () => {
                         className="form-control border-start-0 ps-0"
                         id="email"
                         name="email"
-                        placeholder="your.email@example.com"
+                        placeholder="Enter email id"
                         value={formData.email}
                         onChange={handleChange}
                         required
@@ -175,7 +175,7 @@ const RegisterPage = () => {
                       >
                         <option value="student">Student</option>
                         <option value="admin">Administrator</option>
-                        <option value="driver">Driver</option>
+{/*                         <option value="driver">Driver</option> */}
                       </select>
                     </div>
                   </div>
