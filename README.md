@@ -34,46 +34,11 @@ cd ../frontend
 npm install
 ```
 
-### Running the Application
-
-#### Option 1: Using Batch Files (Recommended for Windows)
-
-From the project root directory:
-
-```
-start-windows.bat
-```
-
-This will start both backend and frontend servers in separate terminal windows.
-
-#### Option 2: Running Each Service Manually
-
-**Backend:**
-```
-cd shuttle-management-system/backend
-npm run dev
-```
-
-**Frontend:**
-```
-cd shuttle-management-system/frontend
-npm run dev
-```
 
 ### Access the Application
 
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:5001
-
-## Default Login Credentials
-
-### Admin
-- Email: admin@example.com
-- Password: admin123
-
-### Student
-- Email: john@example.com
-- Password: password123
 
 ## Troubleshooting
 
