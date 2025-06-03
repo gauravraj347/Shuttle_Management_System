@@ -48,7 +48,12 @@ const RegisterPage = () => {
     try {
       const success = await register(registrationData);
       if (success) {
-        navigate('/profile');
+        // Redirect based on role
+        if (registrationData.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/profile');
+        }
       }
     } catch (err) {
       console.error('Registration error:', err);
@@ -107,7 +112,7 @@ const RegisterPage = () => {
                         className="form-control border-start-0 ps-0"
                         id="email"
                         name="email"
-                        placeholder="your.email@example.com"
+                        placeholder="email@bennett.edu"
                         value={formData.email}
                         onChange={handleChange}
                         required

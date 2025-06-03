@@ -29,6 +29,26 @@ const seedData = {
   ],
   
   stops: [
+
+    {
+      name: 'A',
+      location: {
+        type: 'Point',
+        coordinates: [-122.4196, 37.7949] // [longitude, latitude]
+      },
+      facilities: ['Shelter', 'Seating', 'Information Board']
+    },
+    {
+      name: 'B',
+      location: {
+        type: 'Point',
+        coordinates: [-122.4980, 37.7790]
+      },
+      facilities: ['Shelter', 'Seating']
+    },
+
+
+
     {
       name: 'Main Building',
       location: {
@@ -89,40 +109,48 @@ const seedData = {
   
   routes: [
     {
-      name: 'Express Direct',
-      description: 'Fast direct route between main campus points',
-      distance: 2.8,
-      estimatedTime: 10,
-      fare: 35,
-      peakHourFare: 45,
+      name: 'Route 1',
+      description: 'Main campus route',
       schedule: [
-        { day: 'weekday', departureTime: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'] },
-        { day: 'weekend', departureTime: ['10:00', '12:00', '14:00', '16:00'] }
-      ]
+        { day: 'weekday', departureTime: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'] }
+      ],
+      stops: [stops[0]._id, stops[1]._id],
+      fare: 10,
+      peakHourFare: 15,
+      active: true
     },
     {
-      name: 'Campus Loop',
-      description: 'Circular route covering all major campus buildings',
-      distance: 3.5,
-      estimatedTime: 15,
-      fare: 25,
-      peakHourFare: 35,
+      name: 'Route 2',
+      description: 'Secondary route',
       schedule: [
-        { day: 'weekday', departureTime: ['08:30', '09:30', '10:30', '11:30', '12:30', '13:30', '14:30', '15:30'] },
-        { day: 'weekend', departureTime: ['11:00', '13:00', '15:00', '17:00'] }
-      ]
+        { day: 'weekday', departureTime: ['09:00', '11:00', '13:00', '15:00', '17:00'] }
+      ],
+      stops: [stops[1]._id, stops[2]._id],
+      fare: 8,
+      peakHourFare: 12,
+      active: true
     },
     {
-      name: 'Engineering Express',
-      description: 'Direct route to Engineering buildings',
-      distance: 2.5,
-      estimatedTime: 12,
-      fare: 30,
-      peakHourFare: 40,
+      name: 'Route 3',
+      description: 'Express route',
       schedule: [
-        { day: 'weekday', departureTime: ['07:45', '08:45', '09:45', '10:45', '11:45', '12:45', '13:45', '14:45'] },
-        { day: 'weekend', departureTime: ['10:30', '12:30', '14:30', '16:30'] }
-      ]
+        { day: 'weekday', departureTime: ['08:30', '10:30', '12:30', '14:30', '16:30'] }
+      ],
+      stops: [stops[0]._id, stops[2]._id],
+      fare: 12,
+      peakHourFare: 18,
+      active: true
+    },
+    {
+      name: 'Route 4',
+      description: 'Circular route',
+      schedule: [
+        { day: 'weekday', departureTime: ['08:00', '10:00', '12:00', '14:00', '16:00'] }
+      ],
+      stops: [stops[0]._id, stops[1]._id, stops[2]._id],
+      fare: 15,
+      peakHourFare: 20,
+      active: true
     }
   ],
   
@@ -298,21 +326,33 @@ const seedDatabase = async () => {
     // Create routes with references to stops
     console.log('Creating routes...');
     const routesWithStops = seedData.routes.map((route, index) => {
-      // Assign stops to routes in a round-robin fashion
+      // For the C-D Express route (index 0), only assign stops C and D
+      if (index === 0) {
+        const stopC = stops.find(stop => stop.name === 'C');
+        const stopD = stops.find(stop => stop.name === 'D');
+        if (stopC && stopD) {
+          return {
+            ...route,
+            stops: [stopC._id, stopD._id]
+          };
+        }
+      }
+      
+      // For other routes, use the existing logic
       const routeStops = [];
       
       // For the first route, assign all stops
-      if (index === 0) {
+      if (index === 1) {
         routeStops.push(...stops.map(stop => stop._id));
       }
       // For the second route, assign odd-indexed stops
-      else if (index === 1) {
+      else if (index === 2) {
         stops.forEach((stop, i) => {
           if (i % 2 === 0) routeStops.push(stop._id);
         });
       }
       // For the third route, assign even-indexed stops
-      else if (index === 2) {
+      else if (index === 3) {
         stops.forEach((stop, i) => {
           if (i % 2 === 1) routeStops.push(stop._id);
         });

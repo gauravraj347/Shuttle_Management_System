@@ -138,7 +138,7 @@ const ProfilePage = () => {
       <div className="container py-4">
         <div className="row mb-4">
           <div className="col">
-            <h1>Student Profile</h1>
+            <h1>{user?.role === 'admin' ? 'Admin Profile' : 'Student Profile'}</h1>
             <p className="lead">Manage your account and wallet</p>
           </div>
         </div>
@@ -177,14 +177,7 @@ const ProfilePage = () => {
                 <p><strong>Name:</strong> {user?.name}</p>
                 <p><strong>Email:</strong> {user?.email}</p>
                 <p><strong>Role:</strong> {user?.role}</p>
-                <p>
-                  <strong>Email Verification:</strong> 
-                  {user?.isEmailVerified ? (
-                    <span className="badge bg-success ms-2">Verified</span>
-                  ) : (
-                    <span className="badge bg-warning ms-2">Pending Verification</span>
-                  )}
-                </p>
+                
                 {user?.studentId && (
                   <p><strong>Student ID:</strong> {user.studentId}</p>
                 )}
@@ -324,90 +317,6 @@ const ProfilePage = () => {
                     </div>
                     
                     <button className="btn btn-primary">Save Settings</button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="row mb-4">
-          <div className="col-12">
-            <div className="card">
-              <div className="card-header">
-                <h5 className="mb-0">Fare Estimator</h5>
-              </div>
-              <div className="card-body">
-                <div className="row g-3">
-                  <div className="col-md-4">
-                    <label htmlFor="routeId" className="form-label">Select Route</label>
-                    <select
-                      className="form-select"
-                      id="routeId"
-                      name="routeId"
-                      value={fareSimulation.routeId}
-                      onChange={handleFareSimulationChange}
-                    >
-                      <option value="">Select a route</option>
-                      {routes.map(route => (
-                        <option key={route._id} value={route._id}>
-                          {route.name} ({route.stops.length} stops)
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-md-4">
-                    <label htmlFor="baseFare" className="form-label">Base Fare</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      id="baseFare"
-                      name="baseFare"
-                      value={fareSimulation.baseFare}
-                      onChange={handleFareSimulationChange}
-                      min="1"
-                    />
-                  </div>
-                  <div className="col-md-4 d-flex align-items-end">
-                    <div className="form-check form-switch">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="isPeakHour"
-                        name="isPeakHour"
-                        checked={fareSimulation.isPeakHour}
-                        onChange={handleFareSimulationChange}
-                      />
-                      <label className="form-check-label" htmlFor="isPeakHour">
-                        Peak Hour Pricing
-                      </label>
-                    </div>
-                  </div>
-                  <div className="col-12">
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={calculateFare}
-                    >
-                      Calculate Fare
-                    </button>
-                  </div>
-                </div>
-                
-                {fareSimulation.showResults && (
-                  <div className="mt-4">
-                    <div className="alert alert-info">
-                      <h6 className="alert-heading">Fare Estimate:</h6>
-                      <p className="mb-0">
-                        The estimated fare for this trip is <strong>{fareSimulation.estimatedFare} {wallet.currency}</strong>
-                        {fareSimulation.isPeakHour && (
-                          <small className="d-block text-muted">Includes 25% peak hour surcharge</small>
-                        )}
-                        {!fareSimulation.isPeakHour && (
-                          <small className="d-block text-muted">Includes 10% off-peak discount</small>
-                        )}
-                      </p>
-                    </div>
                   </div>
                 )}
               </div>

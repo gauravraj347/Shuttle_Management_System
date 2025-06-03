@@ -87,7 +87,7 @@ export const walletApi = {
   rechargeWallet: (paymentData) => api.post('/wallet/recharge', paymentData),
   getStudentWallets: () => api.get('/wallet/admin/students'),
   bulkAllocate: (allocationData) => api.post('/wallet/bulk-allocate', allocationData),
-  deductFunds: (deductionData) => api.post('/wallet/deduct', deductionData),
+  deductFunds: (deductionData) => api.post('/wallet/admin/deduct', deductionData),
 };
 
 // Booking API

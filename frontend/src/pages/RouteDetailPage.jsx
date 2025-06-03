@@ -94,35 +94,10 @@ const RouteDetailPage = () => {
         <div className="card mb-4">
           <div className="card-header d-flex justify-content-between align-items-center">
             <h5 className="mb-0">Route Information</h5>
-            <span className={`badge ${route.isActive ? 'bg-success' : 'bg-danger'}`}>
-              {route.isActive ? 'Active' : 'Inactive'}
-            </span>
           </div>
           <div className="card-body">
             <div className="row">
-              <div className="col-md-6">
-                <h6>Optimization Factors:</h6>
-                <ul className="list-group list-group-flush">
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
-                    Peak Hours Optimization
-                    <span className={route.optimizationFactors?.peakHours ? 'text-success' : 'text-muted'}>
-                      {route.optimizationFactors?.peakHours ? 'Enabled' : 'Disabled'}
-                    </span>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
-                    Class Schedules Optimization
-                    <span className={route.optimizationFactors?.classSchedules ? 'text-success' : 'text-muted'}>
-                      {route.optimizationFactors?.classSchedules ? 'Enabled' : 'Disabled'}
-                    </span>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
-                    Demand Analysis Optimization
-                    <span className={route.optimizationFactors?.demandAnalysis ? 'text-success' : 'text-muted'}>
-                      {route.optimizationFactors?.demandAnalysis ? 'Enabled' : 'Disabled'}
-                    </span>
-                  </li>
-                </ul>
-              </div>
+              
               <div className="col-md-6">
                 <h6>Additional Details:</h6>
                 <ul className="list-group list-group-flush">
@@ -155,35 +130,12 @@ const RouteDetailPage = () => {
                   <thead>
                     <tr>
                       <th>Name</th>
-                      <th>Description</th>
-                      <th>Popularity</th>
-                      <th>Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {route.stops.map((stop) => (
-                      <tr key={stop._id}>
-                        <td>{stop.name}</td>
-                        <td>{stop.description || 'No description available'}</td>
-                        <td>
-                          <div className="progress" style={{ height: '20px' }}>
-                            <div
-                              className="progress-bar"
-                              role="progressbar"
-                              style={{ width: `${(stop.popularity || 0) * 10}%` }}
-                              aria-valuenow={stop.popularity || 0}
-                              aria-valuemin="0"
-                              aria-valuemax="10"
-                            >
-                              {stop.popularity || 0}/10
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <span className={`badge ${stop.isActive ? 'bg-success' : 'bg-danger'}`}>
-                            {stop.isActive ? 'Active' : 'Inactive'}
-                          </span>
-                        </td>
+                      <tr key={stop._id || stop}>
+                        <td>{typeof stop === 'object' ? stop.name : 'Loading...'}</td>
                       </tr>
                     ))}
                   </tbody>

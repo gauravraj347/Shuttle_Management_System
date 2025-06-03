@@ -203,80 +203,7 @@ const RouteForm = ({ stops, initialData, onSubmit, buttonText = "Save Route" }) 
     setNewWeekdayTime('');
   };
 
-  const addWeekendTime = () => {
-    if (!newWeekendTime) return;
-    
-    // Check if we already have a weekend entry in the schedule
-    const weekendScheduleIndex = formData.schedule.findIndex(item => item.day === 'weekend');
-    
-    if (weekendScheduleIndex >= 0) {
-      // Update existing weekend schedule
-      const updatedSchedule = [...formData.schedule];
-      updatedSchedule[weekendScheduleIndex] = {
-        ...updatedSchedule[weekendScheduleIndex],
-        departureTime: [...updatedSchedule[weekendScheduleIndex].departureTime, newWeekendTime]
-      };
-      
-      setFormData({
-        ...formData,
-        schedule: updatedSchedule
-      });
-    } else {
-      // Create new weekend schedule
-      setFormData({
-        ...formData,
-        schedule: [
-          ...formData.schedule,
-          {
-            day: 'weekend',
-            departureTime: [newWeekendTime]
-          }
-        ]
-      });
-    }
-    
-    setNewWeekendTime('');
-  };
-
-  const removeWeekdayTime = (index) => {
-    const weekdayScheduleIndex = formData.schedule.findIndex(item => item.day === 'weekday');
-    
-    if (weekdayScheduleIndex >= 0) {
-      const updatedSchedule = [...formData.schedule];
-      const updatedDepartureTimes = [...updatedSchedule[weekdayScheduleIndex].departureTime];
-      updatedDepartureTimes.splice(index, 1);
-      
-      updatedSchedule[weekdayScheduleIndex] = {
-        ...updatedSchedule[weekdayScheduleIndex],
-        departureTime: updatedDepartureTimes
-      };
-      
-      setFormData({
-        ...formData,
-        schedule: updatedSchedule
-      });
-    }
-  };
-
-  const removeWeekendTime = (index) => {
-    const weekendScheduleIndex = formData.schedule.findIndex(item => item.day === 'weekend');
-    
-    if (weekendScheduleIndex >= 0) {
-      const updatedSchedule = [...formData.schedule];
-      const updatedDepartureTimes = [...updatedSchedule[weekendScheduleIndex].departureTime];
-      updatedDepartureTimes.splice(index, 1);
-      
-      updatedSchedule[weekendScheduleIndex] = {
-        ...updatedSchedule[weekendScheduleIndex],
-        departureTime: updatedDepartureTimes
-      };
-      
-      setFormData({
-        ...formData,
-        schedule: updatedSchedule
-      });
-    }
-  };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -297,23 +224,6 @@ const RouteForm = ({ stops, initialData, onSubmit, buttonText = "Save Route" }) 
             onChange={handleChange}
             required
           />
-        </div>
-        <div className="col-md-6">
-          <label htmlFor="isActive" className="form-label d-block">Status</label>
-          <div className="form-check form-switch">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              role="switch"
-              id="isActive"
-              name="isActive"
-              checked={formData.isActive}
-              onChange={handleChange}
-            />
-            <label className="form-check-label" htmlFor="isActive">
-              {formData.isActive ? 'Active' : 'Inactive'}
-            </label>
-          </div>
         </div>
       </div>
 
@@ -416,8 +326,6 @@ const RouteForm = ({ stops, initialData, onSubmit, buttonText = "Save Route" }) 
                   <thead>
                     <tr>
                       <th>Order</th>
-                      <th>Stop Name</th>
-                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -426,34 +334,6 @@ const RouteForm = ({ stops, initialData, onSubmit, buttonText = "Save Route" }) 
                       return (
                         <tr key={index}>
                           <td>{index + 1}</td>
-                          <td>{stop ? stop.name : `Stop ID: ${orderedStop.stopId}`}</td>
-                          <td>
-                            <div className="btn-group btn-group-sm">
-                              <button 
-                                type="button" 
-                                className="btn btn-outline-secondary" 
-                                onClick={() => moveStopUp(index)}
-                                disabled={index === 0}
-                              >
-                                <i className="bi bi-arrow-up"></i>
-                              </button>
-                              <button 
-                                type="button" 
-                                className="btn btn-outline-secondary" 
-                                onClick={() => moveStopDown(index)}
-                                disabled={index === formData.orderedStops.length - 1}
-                              >
-                                <i className="bi bi-arrow-down"></i>
-                              </button>
-                              <button 
-                                type="button" 
-                                className="btn btn-outline-danger" 
-                                onClick={() => handleRemoveStop(orderedStop.stopId)}
-                              >
-                                <i className="bi bi-trash"></i>
-                              </button>
-                            </div>
-                          </td>
                         </tr>
                       );
                     })}
@@ -472,7 +352,7 @@ const RouteForm = ({ stops, initialData, onSubmit, buttonText = "Save Route" }) 
         <div className="card-body">
           <div className="row">
             <div className="col-md-6 mb-3">
-              <h6>Weekdays</h6>
+              
               <div className="input-group mb-2">
                 <input
                   type="time"
@@ -508,42 +388,6 @@ const RouteForm = ({ stops, initialData, onSubmit, buttonText = "Save Route" }) 
               </div>
             </div>
             
-            <div className="col-md-6">
-              <h6>Weekends</h6>
-              <div className="input-group mb-2">
-                <input
-                  type="time"
-                  className="form-control"
-                  value={newWeekendTime}
-                  onChange={(e) => setNewWeekendTime(e.target.value)}
-                />
-                <button 
-                  type="button" 
-                  className="btn btn-outline-primary" 
-                  onClick={addWeekendTime}
-                >
-                  Add
-                </button>
-              </div>
-              <div className="list-group">
-                {formData.schedule.find(item => item.day === 'weekend')?.departureTime.map((time, index) => (
-                  <div key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                    <span>{time}</span>
-                    <button 
-                      type="button" 
-                      className="btn btn-sm btn-outline-danger" 
-                      onClick={() => removeWeekendTime(index)}
-                    >
-                      <i className="bi bi-x"></i>
-                    </button>
-                  </div>
-                ))}
-                {!formData.schedule.find(item => item.day === 'weekend') || 
-                 formData.schedule.find(item => item.day === 'weekend').departureTime.length === 0 ? (
-                  <div className="list-group-item text-muted">No times added</div>
-                ) : null}
-              </div>
-            </div>
           </div>
         </div>
       </div>

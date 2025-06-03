@@ -21,16 +21,13 @@ const RouteList = ({ routes }) => {
           <div className="card-body">
             <div className="d-flex justify-content-between align-items-center">
               <h5 className="card-title mb-0">{route.name}</h5>
-              <span className={`badge ${route.isActive ? 'bg-success' : 'bg-danger'}`}>
-                {route.isActive ? 'Active' : 'Inactive'}
-              </span>
             </div>
             <p className="card-text text-muted mt-2">{route.description}</p>
             <div className="d-flex justify-content-between align-items-center mt-3">
               <div>
                 <small className="text-muted">
                   <i className="bi bi-geo-alt me-1"></i>
-                  {route.stops?.length || 0} Stops
+                  {Array.isArray(route.stops) ? route.stops.length : 0} Stops
                 </small>
                 {route.optimizationFactors && (
                   <div className="mt-2">

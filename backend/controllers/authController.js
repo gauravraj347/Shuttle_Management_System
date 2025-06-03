@@ -11,12 +11,32 @@ const generateToken = (id, role) => {
   );
 };
 
+// Generate student ID
+const generateStudentId = async () => {
+  // Find the last student
+  const lastStudent = await User.findOne({ role: 'student' })
+    .sort({ studentId: -1 })
+    .select('studentId');
+
+  let newId;
+  if (!lastStudent || !lastStudent.studentId) {
+    // If no students exist, start with STU001
+    newId = 'STU001';
+  } else {
+    // Extract the number and increment
+    const lastNumber = parseInt(lastStudent.studentId.replace('STU', ''));
+    newId = `STU${(lastNumber + 1).toString().padStart(3, '0')}`;
+  }
+
+  return newId;
+};
+
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, role, studentId } = req.body;
+    const { name, email, password, role } = req.body;
 
     // Check if user already exists
     const userExists = await User.findOne({ email });
@@ -36,21 +56,23 @@ exports.register = async (req, res) => {
       }
     }
 
+    // Generate student ID for students
+    const studentId = (role === 'student' || !role) ? await generateStudentId() : '';
+
     // Create user
     const user = await User.create({
       name,
       email,
       password,
       role: role || 'student',
-      studentId: studentId || '',
-      isEmailVerified: false, // Will be updated after email verification
+      studentId
     });
 
     if (user) {
       // Create a wallet for the user
       await Wallet.create({
         user: user._id,
-        balance: 0,
+        balance: 500,
         currency: 'Points'
       });
       
@@ -63,6 +85,7 @@ exports.register = async (req, res) => {
           name: user.name,
           email: user.email,
           role: user.role,
+          studentId: user.studentId,
           isEmailVerified: user.isEmailVerified
         },
         token: generateToken(user._id, user.role),

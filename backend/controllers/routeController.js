@@ -28,27 +28,31 @@ exports.createRoute = async (req, res) => {
       }
     }
 
-    const route = await Route.create({
-      name,
-      description,
-      stops: stops || [],
-      orderedStops: orderedStops || [],
-      isActive: isActive !== undefined ? isActive : true,
-      fare: fare || 10,
-      peakHourFare: peakHourFare || 15,
-      distance: distance || 0,
-      estimatedTime: estimatedTime || 0,
-      schedule: schedule || { weekdays: [], weekends: [] },
-      optimizationFactors: optimizationFactors || {
-        peakHours: false,
-        classSchedules: false,
-        demandAnalysis: false
-      }
-    });
+    // Create a new route
+    const routeData = {
+      ...req.body,
+      schedule: [
+        { day: 'weekday', departureTime: req.body.schedule[0].departureTime }
+      ]
+    };
+    
+    const route = new Route(routeData);
+    await route.save();
+    
+    // Update the stops with the route reference
+    if (stops && stops.length > 0) {
+      await Stop.updateMany(
+        { _id: { $in: stops } },
+        { $push: { routes: route._id } }
+      );
+    }
+
+    // Populate the stops before sending the response
+    const populatedRoute = await Route.findById(route._id).populate('stops');
 
     res.status(201).json({
       success: true,
-      data: route
+      data: populatedRoute
     });
   } catch (error) {
     if (error.code === 11000) {
@@ -81,11 +85,7 @@ exports.getRoutes = async (req, res) => {
 exports.getRoute = async (req, res) => {
   try {
     const route = await Route.findById(req.params.id)
-      .populate('stops')
-      .populate({
-        path: 'orderedStops.stopId',
-        model: 'Stop'
-      });
+      .populate('stops');
 
     if (!route) {
       return res.status(404).json({ success: false, message: 'Route not found' });

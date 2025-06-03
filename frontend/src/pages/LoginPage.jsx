@@ -9,7 +9,7 @@ const LoginPage = () => {
   });
   const [formError, setFormError] = useState('');
   
-  const { login, error, loading } = useContext(AuthContext);
+  const { login, error, loading, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -32,7 +32,13 @@ const LoginPage = () => {
     try {
       const success = await login(formData.email, formData.password);
       if (success) {
-        navigate('/profile');
+        // Get user role from AuthContext
+        const userRole = user?.role;
+        if (userRole === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/profile');
+        }
       }
     } catch (err) {
       console.error('Login error:', err);
@@ -72,7 +78,7 @@ const LoginPage = () => {
                         className="form-control border-start-0 ps-0"
                         id="email"
                         name="email"
-                        placeholder="your.email@example.com"
+                        placeholder="email@bennett.edu.in"
                         value={formData.email}
                         onChange={handleChange}
                         required

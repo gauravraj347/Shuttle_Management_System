@@ -266,4 +266,76 @@ exports.getRecommendations = async (req, res) => {
       error: error.message
     });
   }
+};
+
+const getRecommendedRoutes = async (req, res) => {
+  try {
+    const { startStop, endStop, time } = req.query;
+    
+    if (!startStop || !endStop || !time) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide start stop, end stop, and time'
+      });
+    }
+
+    // Find routes that include both stops
+    const routes = await Route.find({
+      stops: { $all: [startStop, endStop] },
+      active: true
+    }).populate('stops');
+
+    if (!routes.length) {
+      return res.status(404).json({
+        success: false,
+        message: 'No routes found between these stops'
+      });
+    }
+
+    // Get current time and day
+    const currentTime = new Date(time);
+    const dayOfWeek = currentTime.getDay();
+    const scheduleType = 'weekday'; // Always use weekday schedule
+
+    // Filter and sort routes based on schedule
+    const recommendedRoutes = routes
+      .map(route => {
+        const schedule = route.schedule.find(s => s.day === scheduleType);
+        if (!schedule) return null;
+
+        // Find the next departure time
+        const nextDeparture = schedule.departureTime.find(departure => {
+          const [hours, minutes] = departure.split(':').map(Number);
+          const departureTime = new Date(currentTime);
+          departureTime.setHours(hours, minutes, 0);
+          return departureTime > currentTime;
+        });
+
+        if (!nextDeparture) return null;
+
+        return {
+          routeId: route._id,
+          routeName: route.name,
+          nextDeparture,
+          fare: route.fare,
+          peakHourFare: route.peakHourFare
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => {
+        const timeA = a.nextDeparture.split(':').map(Number);
+        const timeB = b.nextDeparture.split(':').map(Number);
+        return (timeA[0] * 60 + timeA[1]) - (timeB[0] * 60 + timeB[1]);
+      });
+
+    res.json({
+      success: true,
+      data: recommendedRoutes
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
 }; 

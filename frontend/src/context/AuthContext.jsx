@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
         return true;
       }
+      return false;
     } catch (error) {
       console.error('Login failed:', error);
       setError(error.response?.data?.message || 'Login failed. Please check your credentials.');

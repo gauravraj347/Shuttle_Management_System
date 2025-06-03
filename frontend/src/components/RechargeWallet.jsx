@@ -151,20 +151,7 @@ const RechargeWallet = ({ onSuccess }) => {
       
       <div className="mb-4">
         <label className="form-label">Payment Method</label>
-        <div className="form-check">
-          <input
-            className="form-check-input"
-            type="radio"
-            name="paymentMethod"
-            id="creditCard"
-            value="creditCard"
-            checked={paymentMethod === 'creditCard'}
-            onChange={handlePaymentMethodChange}
-          />
-          <label className="form-check-label" htmlFor="creditCard">
-            Credit/Debit Card
-          </label>
-        </div>
+        
         <div className="form-check">
           <input
             className="form-check-input"
@@ -179,20 +166,7 @@ const RechargeWallet = ({ onSuccess }) => {
             UPI
           </label>
         </div>
-        <div className="form-check">
-          <input
-            className="form-check-input"
-            type="radio"
-            name="paymentMethod"
-            id="bankTransfer"
-            value="bankTransfer"
-            checked={paymentMethod === 'bankTransfer'}
-            onChange={handlePaymentMethodChange}
-          />
-          <label className="form-check-label" htmlFor="bankTransfer">
-            Bank Transfer
-          </label>
-        </div>
+        
       </div>
       
       <div className="d-grid">
@@ -210,68 +184,6 @@ const RechargeWallet = ({ onSuccess }) => {
 
   const renderStepTwo = () => (
     <>
-      {paymentMethod === 'creditCard' && (
-        <div className="card-payment">
-          <div className="mb-3">
-            <label htmlFor="cardNumber" className="form-label">Card Number</label>
-            <input
-              type="text"
-              className="form-control"
-              id="cardNumber"
-              name="cardNumber"
-              value={paymentDetails.cardNumber}
-              onChange={handlePaymentDetailsChange}
-              placeholder="XXXX XXXX XXXX XXXX"
-              maxLength="19"
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="cardHolder" className="form-label">Card Holder Name</label>
-            <input
-              type="text"
-              className="form-control"
-              id="cardHolder"
-              name="cardHolder"
-              value={paymentDetails.cardHolder}
-              onChange={handlePaymentDetailsChange}
-              placeholder="Name on card"
-              required
-            />
-          </div>
-          <div className="row mb-3">
-            <div className="col-md-6">
-              <label htmlFor="expiryDate" className="form-label">Expiry Date</label>
-              <input
-                type="text"
-                className="form-control"
-                id="expiryDate"
-                name="expiryDate"
-                value={paymentDetails.expiryDate}
-                onChange={handlePaymentDetailsChange}
-                placeholder="MM/YY"
-                maxLength="5"
-                required
-              />
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="cvv" className="form-label">CVV</label>
-              <input
-                type="password"
-                className="form-control"
-                id="cvv"
-                name="cvv"
-                value={paymentDetails.cvv}
-                onChange={handlePaymentDetailsChange}
-                placeholder="CVV"
-                maxLength="4"
-                required
-              />
-            </div>
-          </div>
-        </div>
-      )}
-      
       {paymentMethod === 'upi' && (
         <div className="upi-payment">
           <div className="mb-3">
@@ -290,36 +202,7 @@ const RechargeWallet = ({ onSuccess }) => {
         </div>
       )}
       
-      {paymentMethod === 'bankTransfer' && (
-        <div className="bank-payment">
-          <div className="mb-3">
-            <label htmlFor="bankAccount" className="form-label">Account Number</label>
-            <input
-              type="text"
-              className="form-control"
-              id="bankAccount"
-              name="bankAccount"
-              value={paymentDetails.bankAccount}
-              onChange={handlePaymentDetailsChange}
-              placeholder="Bank account number"
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="ifscCode" className="form-label">IFSC Code</label>
-            <input
-              type="text"
-              className="form-control"
-              id="ifscCode"
-              name="ifscCode"
-              value={paymentDetails.ifscCode}
-              onChange={handlePaymentDetailsChange}
-              placeholder="IFSC code"
-              required
-            />
-          </div>
-        </div>
-      )}
+      
       
       <div className="d-flex justify-content-between mt-4">
         <button
@@ -385,16 +268,7 @@ const RechargeWallet = ({ onSuccess }) => {
               </div>
             </div>
           )}
-          {paymentMethod === 'bankTransfer' && (
-            <div className="row mb-2">
-              <div className="col-6">
-                <strong>Account Number:</strong>
-              </div>
-              <div className="col-6 text-end">
-                **** {paymentDetails.bankAccount.slice(-4)}
-              </div>
-            </div>
-          )}
+          
           <div className="row mb-2">
             <div className="col-6">
               <strong>Total Points:</strong>

@@ -35,13 +35,14 @@ const RouteSchema = new mongoose.Schema({
   schedule: [{
     day: {
       type: String,
-      enum: ['weekday', 'weekend', 'holiday'],
-      required: [true, 'Please specify the day type']
+      required: true,
+      enum: ['weekday', 'holiday'],
+      default: 'weekday'
     },
-    departureTime: {
-      type: [String],
-      required: [true, 'Please provide departure times']
-    }
+    departureTime: [{
+      type: String,
+      required: true
+    }]
   }],
   active: {
     type: Boolean,

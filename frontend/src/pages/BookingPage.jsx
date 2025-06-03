@@ -373,7 +373,7 @@ const BookingPage = () => {
         <div className="row mb-4">
           <div className="col">
             <h1>Book a Shuttle</h1>
-            <p className="lead">Find the best route between stops with AI-powered recommendations</p>
+            <p className="lead">Find the best route between stops </p>
           </div>
         </div>
         
@@ -486,21 +486,7 @@ const BookingPage = () => {
                     </select>
                   </div>
                   
-                  <div className="mb-3">
-                    <label htmlFor="preferredCriteria" className="form-label">Optimization Preference</label>
-                    <select
-                      className="form-select"
-                      id="preferredCriteria"
-                      name="preferredCriteria"
-                      value={bookingForm.preferredCriteria}
-                      onChange={handleInputChange}
-                    >
-                      <option value="fastest">Fastest Route</option>
-                      <option value="cheapest">Cheapest Route</option>
-                      <option value="least_crowded">Least Crowded</option>
-                      <option value="fewest_transfers">Fewest Transfers</option>
-                    </select>
-                  </div>
+                  
                   
                   <button 
                     type="submit" 
@@ -674,7 +660,9 @@ const BookingPage = () => {
                             </div>
                             <div className="flex-grow-1">
                               <div className="mb-3">
-                                <h6 className="mb-0">{route.fromStop.name}</h6>
+                                <h6 className="mb-0">
+                                  {typeof route.fromStop === 'object' ? route.fromStop.name : 'Loading...'}
+                                </h6>
                                 <small className="text-muted">
                                   {new Date(route.departureTime).toLocaleTimeString([], { 
                                     hour: '2-digit', 
@@ -685,36 +673,27 @@ const BookingPage = () => {
                               
                               {!route.directRoute && route.transfers && route.transfers.map((transfer, idx) => (
                                 <div key={idx} className="mb-3">
-                                  <div className="d-flex">
+                                  <div className="d-flex align-items-center">
+                                    <i className="bi bi-arrow-right text-primary me-2"></i>
                                     <div>
                                       <h6 className="mb-0">
-                                        {transfer.stopName}
-                                        <small className="text-muted ms-2">Transfer Point</small>
+                                        {typeof transfer.stop === 'object' ? transfer.stop.name : 'Loading...'}
                                       </h6>
-                                      <div className="small text-muted mb-1">
-                                        Arrive: {new Date(transfer.transferTime).toLocaleTimeString([], { 
+                                      <small className="text-muted">
+                                        {new Date(transfer.time).toLocaleTimeString([], { 
                                           hour: '2-digit', 
                                           minute: '2-digit' 
                                         })}
-                                      </div>
-                                      <div className="small text-muted mb-1">
-                                        Depart: {new Date(transfer.nextDeparture).toLocaleTimeString([], { 
-                                          hour: '2-digit', 
-                                          minute: '2-digit' 
-                                        })}
-                                      </div>
-                                      <div className="d-flex align-items-center small text-primary">
-                                        <span className="me-2">From: {transfer.fromRouteName}</span>
-                                        <i className="bi bi-arrow-right"></i>
-                                        <span className="ms-2">To: {transfer.toRouteName}</span>
-                                      </div>
+                                      </small>
                                     </div>
                                   </div>
                                 </div>
                               ))}
                               
                               <div>
-                                <h6 className="mb-0">{route.toStop.name}</h6>
+                                <h6 className="mb-0">
+                                  {typeof route.toStop === 'object' ? route.toStop.name : 'Loading...'}
+                                </h6>
                                 <small className="text-muted">
                                   {new Date(route.arrivalTime).toLocaleTimeString([], { 
                                     hour: '2-digit', 
