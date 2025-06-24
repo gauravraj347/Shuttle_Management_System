@@ -37,19 +37,10 @@ router.post('/admin/bulk-allocate', protect, authorize('admin'), adminBulkAlloca
 // Get all student wallets
 router.get('/admin/students', protect, authorize('admin'), getStudentWallets);
 
-// @route   GET /api/wallet/transactions
-// @desc    Get user's transaction history
-// @access  Private
 router.get('/transactions', protect, getTransactions);
 
-// @route   POST /api/wallet/bulk-allocate
-// @desc    Bulk allocate credits (monthly, semester, or bonus)
-// @access  Private (Admin only)
 router.post('/bulk-allocate', protect, authorize('admin'), bulkAllocate);
 
-// @route   POST /api/wallet/deduct
-// @desc    Deduct points for violations
-// @access  Private (Admin only)
 router.post('/deduct', protect, authorize('admin'), deductFunds);
 
 module.exports = router; 

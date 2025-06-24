@@ -33,14 +33,6 @@ const BookingSchema = new mongoose.Schema({
   fare: {
     type: Number,
     required: [true, 'Please provide fare amount']
-  },
-  isPeakHour: {
-    type: Boolean,
-    default: false
-  },
-  shuttleId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Shuttle'
   }
 }, { timestamps: true });
 

@@ -1,39 +1,40 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const StopSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Please provide a stop name'],
-    trim: true,
-    unique: true
-  },
-  location: {
-    type: {
+const StopSchema = new mongoose.Schema(
+  {
+    name: {
       type: String,
-      enum: ['Point'],
-      default: 'Point'
+      required: [true, "Please provide a stop name"],
+      trim: true,
+      unique: true,
     },
-    coordinates: {
-      type: [Number],
-      required: true
-    }
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        default: "Point",
+      },
+      coordinates: {
+        type: [Number],
+        required: true,
+      },
+    },
+   
+    routes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Route",
+      },
+    ],
+    active: {
+      type: Boolean,
+      default: true,
+    },
   },
-  facilities: {
-    type: [String],
-    enum: ['Shelter', 'Seating', 'Information Board', 'Vending Machine', 'Coffee Shop', 'Restroom', 'Bicycle Racks'],
-    default: []
-  },
-  routes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Route'
-  }],
-  active: {
-    type: Boolean,
-    default: true
-  }
-}, { timestamps: true });
+  { timestamps: true }
+);
 
 // Create a geospatial index for location-based queries
-StopSchema.index({ location: '2dsphere' });
+StopSchema.index({ location: "2dsphere" });   //calculating distance between coordinates,
 
-module.exports = mongoose.model('Stop', StopSchema); 
+module.exports = mongoose.model("Stop", StopSchema);
