@@ -180,7 +180,7 @@ const RegisterPage = () => {
                       >
                         <option value="student">Student</option>
                         <option value="admin">Administrator</option>
-                        <option value="driver">Driver</option>
+{/*                         <option value="driver">Driver</option> */}
                       </select>
                     </div>
                   </div>
