@@ -8,7 +8,7 @@ const RegisterPage = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'student'
+    role: 'student' // default role
   });
   const [formError, setFormError] = useState('');
 
@@ -44,16 +44,11 @@ const RegisterPage = () => {
 
     // Remove confirmPassword before sending to API
     const { confirmPassword, ...registrationData } = formData;
-    
+
     try {
       const success = await register(registrationData);
       if (success) {
-        // Redirect based on role
-        if (registrationData.role === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/profile');
-        }
+        navigate('/profile'); // always profile since student
       }
     } catch (err) {
       console.error('Registration error:', err);
@@ -112,7 +107,7 @@ const RegisterPage = () => {
                         className="form-control border-start-0 ps-0"
                         id="email"
                         name="email"
-                        placeholder="email@bennett.edu"
+                        placeholder="email@college.com"
                         value={formData.email}
                         onChange={handleChange}
                         required
@@ -165,26 +160,6 @@ const RegisterPage = () => {
                     </div>
                   </div>
 
-                  <div className="mb-4">
-                    <label htmlFor="role" className="form-label">Account Type</label>
-                    <div className="input-group">
-                      <span className="input-group-text bg-light border-end-0">
-                        <i className="bi bi-person-badge text-muted"></i>
-                      </span>
-                      <select
-                        className="form-select border-start-0 ps-0"
-                        id="role"
-                        name="role"
-                        value={formData.role}
-                        onChange={handleChange}
-                      >
-                        <option value="student">Student</option>
-                        <option value="admin">Administrator</option>
-{/*                         <option value="driver">Driver</option> */}
-                      </select>
-                    </div>
-                  </div>
-
                   <div className="d-grid gap-2 mt-5">
                     <button 
                       type="submit" 
@@ -218,4 +193,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage; 
+export default RegisterPage;
