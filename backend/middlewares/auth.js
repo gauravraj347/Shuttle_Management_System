@@ -46,7 +46,7 @@ exports.protect = async (req, res, next) => {
     console.error("Auth middleware error:", error);
     return res.status(401).json({
       success: false,
-      message: "Not authorized to access this route",
+      message: "Not authorized to access ",
     });
   }
 };

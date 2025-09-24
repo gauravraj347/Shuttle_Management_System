@@ -14,13 +14,6 @@ A comprehensive web application for managing university shuttle services, bookin
 
 ---
 
-## ⚙️ Getting Started
-
-### ✅ Prerequisites
-
-- [Node.js](https://nodejs.org/) (v14 or higher recommended)
-- [MongoDB](https://www.mongodb.com/) (local or Atlas)
-
 ### 🚀 Installation
 
 1. **Clone the Repository**
@@ -57,7 +50,7 @@ A comprehensive web application for managing university shuttle services, bookin
 ## 🌐 Access the Application
 
 - **Frontend**: [http://localhost:3000](http://localhost:3000)
-- **Backend API**: [http://localhost:5001](http://localhost:5001)
+- **Backend API**: [http://localhost:5000](http://localhost:5000)
 
 ## 🧑‍💼 Admin Dashboard Features
 

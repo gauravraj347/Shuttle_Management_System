@@ -44,7 +44,7 @@ exports.register = async (req, res) => {
       if (!isUniversityEmail) {
         return res.status(400).json({
           success: false,
-          message: "Please use your university email to register as a student",
+          message: "Please use your college email to register",
         });
       }
     }

@@ -26,7 +26,6 @@ const ProfilePage = () => {
   const [fareSimulation, setFareSimulation] = useState({
     routeId: '',
     baseFare: 30,
-    isPeakHour: false,
     estimatedFare: 0,
     showResults: false
   });
@@ -97,13 +96,6 @@ const ProfilePage = () => {
   const calculateFare = () => {
     const baseFare = parseInt(fareSimulation.baseFare);
     let estimatedFare = baseFare;
-    
-    // Apply peak hour pricing
-    if (fareSimulation.isPeakHour) {
-      estimatedFare = Math.round(baseFare * 1.25); // 25% more during peak hours
-    } else {
-      estimatedFare = Math.round(baseFare * 0.9); // 10% discount during off-peak
-    }
     
     // Set the results
     setFareSimulation(prev => ({

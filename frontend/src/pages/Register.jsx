@@ -41,9 +41,9 @@ const Register = () => {
       return;
     }
     
-    // Email format validation for Bennett University
+    // Email format validation for college
     if (!validateEmail(formData.email)) {
-      setFormError('Please use your Bennett University email address (@bennett.edu.in)');
+      setFormError('Please use your college email address (@college.com)');
       return;
     }
     
@@ -54,8 +54,8 @@ const Register = () => {
     }
     
     // Password length validation
-    if (formData.password.length < 3) {
-      setFormError('Password must be at least 3 characters');
+    if (formData.password.length < 6) {
+      setFormError('Password must be at least 6 characters');
       return;
     }
     
@@ -142,7 +142,7 @@ const Register = () => {
               required
             />
             <small className="form-text text-muted">
-              Must be a Bennett University email (@bennett.edu.in)
+              Must be a college email (@college.com)
             </small>
           </div>
           

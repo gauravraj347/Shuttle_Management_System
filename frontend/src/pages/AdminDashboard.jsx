@@ -6,7 +6,7 @@ import RouteForm from '../components/RouteForm';
 import axios from 'axios';
 
 // Define API URL
-const API_URL = 'http://localhost:5001';
+const API_URL = 'https://campus-shuttle.onrender.com';
 
 const AdminDashboard = () => {
   const { user, isAuthenticated, loading: authLoading, token } = useContext(AuthContext);
@@ -793,7 +793,7 @@ const AdminDashboard = () => {
                             <td>{route.name}</td>
                             <td>{route.description}</td>
                             <td>
-                              {route.fare} <small className="text-muted">({route.peakHourFare || route.fare} peak)</small>
+                              {route.fare}
                             </td>
                             <td>
                               <div className="btn-group">
@@ -1308,7 +1308,7 @@ const AdminDashboard = () => {
             </div>
             <div className="flex-grow-1">
               <div className="fw-bold text-white">{user?.name || 'Admin User'}</div>
-              <small className="text-muted">{user?.email || 'admin@bennett.edu.in'}</small>
+              <small className="text-muted">{user?.email || 'admin@college.com'}</small>
             </div>
           </div>
           <Link to="/logout" className="btn btn-outline-light w-100 btn-sm">

@@ -206,21 +206,21 @@ exports.getRecommendations = async (req, res) => {
     });
     // Generate transfer statistics
     const transferStats = {
-      averageWaitTime: 5,
-      averageTimeSaved: 8,
-      popularTransferPoints: [
-        { name: "Campus Cross", popularity: "high" },
-        { name: "Student Center", popularity: "medium" },
-      ],
-      peakHours: ["08:00-09:00", "17:00-18:00"],
-      routeFrequency: routes.reduce((acc, route) => {
-        const weekdaySchedule = route.schedule.find((s) => s.day === "weekday");
-        const frequency = weekdaySchedule
-          ? `${Math.round(60 / (weekdaySchedule.departureTime.length / 8))} min`
-          : "Unknown";
-        acc[route._id] = frequency;
-        return acc;
-      }, {}),
+      // averageWaitTime: 5,
+      // averageTimeSaved: 8,
+      // popularTransferPoints: [
+      //   { name: "Campus Cross", popularity: "high" },
+      //   { name: "Student Center", popularity: "medium" },
+      // ],
+      // peakHours: ["08:00-09:00", "17:00-18:00"],
+      // routeFrequency: routes.reduce((acc, route) => {
+      //   const weekdaySchedule = route.schedule.find((s) => s.day === "weekday");
+      //   const frequency = weekdaySchedule
+      //     ? `${Math.round(60 / (weekdaySchedule.departureTime.length / 8))} min`
+      //     : "Unknown";
+      //   acc[route._id] = frequency;
+      //   return acc;
+      // }, {}),
     };
     return res.json({
       success: true,

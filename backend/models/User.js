@@ -12,7 +12,7 @@ const UserSchema = new mongoose.Schema(
     email: {
       type: String,
       required: [true, "Please provide an email"],
-      match: [/^[\w-\.]+@bennett\.edu\.in$/, "Please provide a valid email"],
+      match: [/^[\w-\.]+@college\.com$/, "Please provide a valid email"],
       unique: true,
       trim: true,
       lowercase: true,
@@ -49,7 +49,6 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-
 // Method to add transaction and update balance
 UserSchema.methods.addTransaction = async function (amount, type, description) {
   // Create the transaction
@@ -79,8 +78,8 @@ UserSchema.methods.addTransaction = async function (amount, type, description) {
 
 // Method to check if email is university email
 UserSchema.statics.isUniversityEmail = function (email) {
-  // Check for bennett.edu.in domain specifically
-  return email.endsWith("@bennett.edu.in");
+  // Check for college.com domain specifically
+  return email.endsWith("@college.com");
 };
 
 module.exports = mongoose.model("User", UserSchema);

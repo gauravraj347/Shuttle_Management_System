@@ -33,9 +33,9 @@ const RoutesPage = () => {
       <div className="container">
         <div className="row mb-4">
           <div className="col">
-            <h1>Shuttle Routes</h1>
+            <h1>Routes</h1>
             <p className="lead">
-              Browse all available shuttle routes across the campus.
+              Browse all available routes across the campus.
             </p>
           </div>
         </div>

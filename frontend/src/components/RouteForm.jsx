@@ -9,9 +9,8 @@ const RouteForm = ({ stops, initialData, onSubmit, buttonText = "Save Route" }) 
     orderedStops: [],
     isActive: true,
     fare: 10,
-    peakHourFare: 15,
-    distance: 0,
-    estimatedTime: 0,
+    distance: 1,
+    estimatedTime: 1,
     schedule: [],
     optimizationFactors: {
       peakHours: false,
@@ -21,8 +20,7 @@ const RouteForm = ({ stops, initialData, onSubmit, buttonText = "Save Route" }) 
   });
 
   // For schedule management
-  const [newWeekdayTime, setNewWeekdayTime] = useState('');
-  const [newWeekendTime, setNewWeekendTime] = useState('');
+  const [newTime, setNewTime] = useState('');
   
   // Format stops data for react-select
   const stopsOptions = stops.map(stop => ({
@@ -45,7 +43,6 @@ const RouteForm = ({ stops, initialData, onSubmit, buttonText = "Save Route" }) 
         orderedStops: initialData.orderedStops || [],
         isActive: initialData.isActive !== undefined ? initialData.isActive : true,
         fare: initialData.fare || 10,
-        peakHourFare: initialData.peakHourFare || 15,
         distance: initialData.distance || 0,
         estimatedTime: initialData.estimatedTime || 0,
         schedule: initialData.schedule || [],
@@ -74,7 +71,7 @@ const RouteForm = ({ stops, initialData, onSubmit, buttonText = "Save Route" }) 
       } else {
         setFormData({ ...formData, [name]: checked });
       }
-    } else if (name === 'fare' || name === 'peakHourFare' || name === 'distance' || name === 'estimatedTime') {
+    } else if (name === 'fare' || name === 'distance' || name === 'estimatedTime') {
       setFormData({ ...formData, [name]: parseFloat(value) || 0 });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -168,42 +165,21 @@ const RouteForm = ({ stops, initialData, onSubmit, buttonText = "Save Route" }) 
     });
   };
 
-  const addWeekdayTime = () => {
-    if (!newWeekdayTime) return;
-    
-    // Check if we already have a weekday entry in the schedule
-    const weekdayScheduleIndex = formData.schedule.findIndex(item => item.day === 'weekday');
-    
-    if (weekdayScheduleIndex >= 0) {
-      // Update existing weekday schedule
-      const updatedSchedule = [...formData.schedule];
-      updatedSchedule[weekdayScheduleIndex] = {
-        ...updatedSchedule[weekdayScheduleIndex],
-        departureTime: [...updatedSchedule[weekdayScheduleIndex].departureTime, newWeekdayTime]
-      };
-      
-      setFormData({
-        ...formData,
-        schedule: updatedSchedule
-      });
-    } else {
-      // Create new weekday schedule
-      setFormData({
-        ...formData,
-        schedule: [
-          ...formData.schedule,
-          {
-            day: 'weekday',
-            departureTime: [newWeekdayTime]
-          }
-        ]
-      });
-    }
-    
-    setNewWeekdayTime('');
+  const addTime = () => {
+    if (!newTime) return;
+    setFormData({
+      ...formData,
+      schedule: [...formData.schedule, newTime]
+    });
+    setNewTime('');
   };
 
-  
+  const removeTime = (index) => {
+    setFormData({
+      ...formData,
+      schedule: formData.schedule.filter((_, i) => i !== index)
+    });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -251,20 +227,6 @@ const RouteForm = ({ stops, initialData, onSubmit, buttonText = "Save Route" }) 
             min="0"
             step="0.1"
             value={formData.fare}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="col-md-6">
-          <label htmlFor="peakHourFare" className="form-label">Peak Hour Fare (Points)</label>
-          <input
-            type="number"
-            className="form-control"
-            id="peakHourFare"
-            name="peakHourFare"
-            min="0"
-            step="0.1"
-            value={formData.peakHourFare}
             onChange={handleChange}
             required
           />
@@ -352,61 +314,46 @@ const RouteForm = ({ stops, initialData, onSubmit, buttonText = "Save Route" }) 
         <div className="card-body">
           <div className="row">
             <div className="col-md-6 mb-3">
-              
               <div className="input-group mb-2">
                 <input
                   type="time"
                   className="form-control"
-                  value={newWeekdayTime}
-                  onChange={(e) => setNewWeekdayTime(e.target.value)}
+                  value={newTime}
+                  onChange={(e) => setNewTime(e.target.value)}
                 />
-                <button 
-                  type="button" 
-                  className="btn btn-outline-primary" 
-                  onClick={addWeekdayTime}
+                <button
+                  type="button"
+                  className="btn btn-outline-primary"
+                  onClick={addTime}
                 >
                   Add
                 </button>
               </div>
               <div className="list-group">
-                {formData.schedule.find(item => item.day === 'weekday')?.departureTime.map((time, index) => (
-                  <div key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                    <span>{time}</span>
-                    <button 
-                      type="button" 
-                      className="btn btn-sm btn-outline-danger" 
-                      onClick={() => removeWeekdayTime(index)}
-                    >
-                      <i className="bi bi-x"></i>
-                    </button>
-                  </div>
-                ))}
-                {!formData.schedule.find(item => item.day === 'weekday') || 
-                 formData.schedule.find(item => item.day === 'weekday').departureTime.length === 0 ? (
+                {formData.schedule.length > 0 ? (
+                  formData.schedule.map((time, index) => (
+                    <div key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                      <span>{time}</span>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => removeTime(index)}
+                      >
+                        <i className="bi bi-x"></i>
+                      </button>
+                    </div>
+                  ))
+                ) : (
                   <div className="list-group-item text-muted">No times added</div>
-                ) : null}
+                )}
               </div>
             </div>
-            
           </div>
         </div>
       </div>
 
       <div className="mb-3">
         <label className="form-label">Optimization Factors</label>
-        <div className="form-check">
-          <input
-            className="form-check-input"
-            type="checkbox"
-            id="peakHours"
-            name="optimizationFactors.peakHours"
-            checked={formData.optimizationFactors.peakHours}
-            onChange={handleChange}
-          />
-          <label className="form-check-label" htmlFor="peakHours">
-            Optimize for Peak Hours
-          </label>
-        </div>
         <div className="form-check">
           <input
             className="form-check-input"

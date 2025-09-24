@@ -5,16 +5,11 @@ const ExpenseAnalytics = ({ walletTransactions }) => {
   const [dateRange, setDateRange] = useState('month');
   const [categoryBreakdown, setCategoryBreakdown] = useState({});
   const [trendData, setTrendData] = useState([]);
-  const [peakHourAnalysis, setPeakHourAnalysis] = useState({
-    peakHours: 0,
-    offPeakHours: 0
-  });
 
   useEffect(() => {
     if (walletTransactions?.length > 0) {
       generateCategoryBreakdown();
       generateTrendData();
-      analyzePeakHourSpending();
     }
   }, [walletTransactions, dateRange]);
 
@@ -114,56 +109,6 @@ const ExpenseAnalytics = ({ walletTransactions }) => {
     setTrendData(result);
   };
 
-  // Analyze peak vs. off-peak hour spending
-  const analyzePeakHourSpending = () => {
-    const filteredTransactions = getFilteredTransactions();
-    let peakHours = 0;
-    let offPeakHours = 0;
-    
-    filteredTransactions.forEach(tx => {
-      if (tx.description.includes('Shuttle booking')) {
-        if (tx.description.includes('peak hour')) {
-          peakHours += tx.amount;
-        } else {
-          offPeakHours += tx.amount;
-        }
-      }
-    });
-    
-    setPeakHourAnalysis({ peakHours, offPeakHours });
-  };
-
-  // Calculate the most frequent route from transactions
-  const getMostFrequentRoute = () => {
-    const filteredTransactions = getFilteredTransactions();
-    const routeCounts = {};
-    
-    filteredTransactions.forEach(tx => {
-      if (tx.description.includes('Shuttle booking')) {
-        // Extract route information from description
-        const routeMatch = tx.description.match(/from (.+) to (.+)/);
-        if (routeMatch && routeMatch.length >= 3) {
-          const route = `${routeMatch[1]} to ${routeMatch[2]}`;
-          routeCounts[route] = (routeCounts[route] || 0) + 1;
-        }
-      }
-    });
-    
-    // Find the most frequent route
-    let maxCount = 0;
-    let mostFrequentRoute = '';
-    
-    Object.entries(routeCounts).forEach(([route, count]) => {
-      if (count > maxCount) {
-        maxCount = count;
-        mostFrequentRoute = route;
-      }
-    });
-    
-    return { route: mostFrequentRoute, count: maxCount };
-  };
-
-  const mostFrequentRoute = getMostFrequentRoute();
   const totalSpent = Object.values(categoryBreakdown).reduce((sum, amount) => sum + amount, 0);
   
   // Simple horizontal chart renderer
@@ -287,84 +232,9 @@ const ExpenseAnalytics = ({ walletTransactions }) => {
         <div className="col-md-5">
           <div className="card mb-4">
             <div className="card-header">
-              <h6 className="mb-0">Peak Hour Analysis</h6>
-            </div>
-            <div className="card-body">
-              <div className="text-center mb-4">
-                <div className="peak-hour-chart">
-                  <div className="peak-hour-donut">
-                    <div 
-                      className="peak-slice"
-                      style={{ 
-                        transform: `rotate(0deg)`,
-                        backgroundColor: '#0d6efd',
-                        clipPath: `polygon(50% 50%, 100% 0%, 100% 100%)`
-                      }}
-                    ></div>
-                    <div 
-                      className="off-peak-slice"
-                      style={{
-                        transform: `rotate(90deg)`,
-                        backgroundColor: '#20c997',
-                        clipPath: `polygon(50% 50%, 100% 0%, 100% 100%)`
-                      }}
-                    ></div>
-                    <div className="donut-hole"></div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="row text-center">
-                <div className="col-6">
-                  <div className="peak-legend">
-                    <span className="legend-color bg-primary"></span>
-                    <div>
-                      <div className="small text-muted">Peak Hours</div>
-                      <div className="fw-bold">{peakHourAnalysis.peakHours} pts</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-6">
-                  <div className="peak-legend">
-                    <span className="legend-color bg-success"></span>
-                    <div>
-                      <div className="small text-muted">Off-Peak</div>
-                      <div className="fw-bold">{peakHourAnalysis.offPeakHours} pts</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <hr />
-              
-              <div className="text-center">
-                <p className="text-muted mb-0 small">
-                  Traveling during off-peak hours can save you up to 20% on fares
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="card mb-4">
-            <div className="card-header">
               <h6 className="mb-0">Travel Insights</h6>
             </div>
             <div className="card-body">
-              <div className="d-flex align-items-start mb-3">
-                <div className="insight-icon bg-light rounded-circle p-2 me-3">
-                  <i className="bi bi-repeat text-primary"></i>
-                </div>
-                <div>
-                  <h6>Most Frequent Route</h6>
-                  <p className="mb-0">{mostFrequentRoute.route || 'No data'}</p>
-                  {mostFrequentRoute.count > 0 && (
-                    <div className="badge bg-light text-dark">
-                      Traveled {mostFrequentRoute.count} times
-                    </div>
-                  )}
-                </div>
-              </div>
-              
               <div className="d-flex align-items-start mb-3">
                 <div className="insight-icon bg-light rounded-circle p-2 me-3">
                   <i className="bi bi-graph-up text-success"></i>
@@ -375,18 +245,6 @@ const ExpenseAnalytics = ({ walletTransactions }) => {
                     {totalSpent > 0 && trendData.length > 0 
                       ? Math.round(totalSpent / trendData.length) 
                       : 0} points per {dateRange === 'week' ? 'day' : 'week'}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="d-flex align-items-start">
-                <div className="insight-icon bg-light rounded-circle p-2 me-3">
-                  <i className="bi bi-piggy-bank text-danger"></i>
-                </div>
-                <div>
-                  <h6>Potential Savings</h6>
-                  <p className="mb-0">
-                    {Math.round(peakHourAnalysis.peakHours * 0.2)} points by switching to off-peak hours
                   </p>
                 </div>
               </div>
@@ -464,55 +322,6 @@ const ExpenseAnalytics = ({ walletTransactions }) => {
           overflow: hidden;
           text-overflow: ellipsis;
           max-width: 100%;
-        }
-        
-        .peak-hour-chart {
-          width: 150px;
-          height: 150px;
-          position: relative;
-          margin: 0 auto;
-        }
-        
-        .peak-hour-donut {
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .peak-slice, .off-peak-slice {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          transform-origin: 50% 50%;
-        }
-        
-        .donut-hole {
-          position: absolute;
-          width: 60%;
-          height: 60%;
-          background-color: white;
-          border-radius: 50%;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        
-        .peak-legend {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        
-        .legend-color {
-          width: 15px;
-          height: 15px;
-          border-radius: 4px;
-          margin-right: 8px;
         }
         
         .insight-icon {

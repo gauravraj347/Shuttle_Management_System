@@ -3,98 +3,6 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { bookingApi, stopsApi, walletApi } from '../services/api';
 
-// Mock data generator for emergency cases
-const generateMockRecommendations = (fromStopId, toStopId) => {
-  // Get stop names
-  const getStopName = (stopId) => {
-    switch(stopId) {
-      case 'stop-001': return 'Main Building';
-      case 'stop-002': return 'Science Block';
-      case 'stop-003': return 'Library';
-      case 'stop-004': return 'Cafeteria';
-      default: return 'Unknown Stop';
-    }
-  };
-  
-  const currentTime = new Date();
-  const fromStopName = getStopName(fromStopId);
-  const toStopName = getStopName(toStopId);
-  
-  // Generate mock recommendations response
-  return {
-    data: {
-      success: true,
-      recommendations: [
-        // Direct Express Route (Fastest)
-        {
-          routeId: 'route-001',
-          routeName: 'Express Direct',
-          departureTime: new Date(currentTime),
-          arrivalTime: new Date(new Date(currentTime).getTime() + 10 * 60000),
-          fare: 35,
-          distance: 2.8,
-          distanceInKm: 2.8,
-          fromStop: { _id: fromStopId, name: fromStopName },
-          toStop: { _id: toStopId, name: toStopName },
-          travelTime: 10,
-          occupancy: 'medium',
-          directRoute: true,
-          transfers: [],
-          legs: [],
-          timeSaved: 0,
-          transferBenefits: null,
-          stops: [
-            { stopId: fromStopId, name: fromStopName, arrivalTime: null, departureTime: new Date(currentTime) },
-            { stopId: toStopId, name: toStopName, arrivalTime: new Date(new Date(currentTime).getTime() + 10 * 60000), departureTime: null }
-          ]
-        },
-        // Campus Loop (Slower but cheaper)
-        {
-          routeId: 'route-002',
-          routeName: 'Campus Loop',
-          departureTime: new Date(new Date(currentTime).getTime() + 5 * 60000),
-          arrivalTime: new Date(new Date(currentTime).getTime() + 20 * 60000),
-          fare: 25,
-          distance: 3.5,
-          distanceInKm: 3.5,
-          fromStop: { _id: fromStopId, name: fromStopName },
-          toStop: { _id: toStopId, name: toStopName },
-          travelTime: 15,
-          occupancy: 'low',
-          directRoute: true,
-          transfers: [],
-          legs: [],
-          timeSaved: 0,
-          transferBenefits: null,
-          stops: [
-            { stopId: fromStopId, name: fromStopName, arrivalTime: null, departureTime: new Date(new Date(currentTime).getTime() + 5 * 60000) },
-            { stopId: 'stop-003', name: 'Library', arrivalTime: new Date(new Date(currentTime).getTime() + 10 * 60000), departureTime: new Date(new Date(currentTime).getTime() + 11 * 60000) },
-            { stopId: 'stop-004', name: 'Cafeteria', arrivalTime: new Date(new Date(currentTime).getTime() + 15 * 60000), departureTime: new Date(new Date(currentTime).getTime() + 16 * 60000) },
-            { stopId: toStopId, name: toStopName, arrivalTime: new Date(new Date(currentTime).getTime() + 20 * 60000), departureTime: null }
-          ]
-        }
-      ],
-      nearbyStops: [
-        { _id: 'stop-001', stopId: 'stop-001', name: 'Main Building', distance: 0.1, walkingTime: 2 },
-        { _id: 'stop-002', stopId: 'stop-002', name: 'Science Block', distance: 0.2, walkingTime: 4 },
-        { _id: 'stop-003', stopId: 'stop-003', name: 'Library', distance: 0.3, walkingTime: 5 }
-      ],
-      transferStats: {
-        averageWaitTime: 5,
-        averageTimeSaved: 8,
-        popularTransferPoints: [
-          { name: 'Campus Cross', popularity: 'high' },
-          { name: 'Student Center', popularity: 'medium' }
-        ],
-        peakHours: ['08:00-09:00', '17:00-18:00'],
-        routeFrequency: {
-          'route-001': '15 min',
-          'route-002': '20 min'
-        }
-      }
-    }
-  };
-};
 
 const BookingPage = () => {
   const { user, isAuthenticated, loading: authLoading } = useContext(AuthContext);
@@ -109,7 +17,6 @@ const BookingPage = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(null);
   const [error, setError] = useState(null);
-  const [isUsingMockData, setIsUsingMockData] = useState(false);
   
   // Form state
   const [bookingForm, setBookingForm] = useState({
@@ -120,6 +27,9 @@ const BookingPage = () => {
   
   // Selected route for booking
   const [selectedRoute, setSelectedRoute] = useState(null);
+  
+  // Add state to track selected departure time for each route
+  const [selectedDepartureTimes, setSelectedDepartureTimes] = useState({});
   
   // Fetch stops from database
   useEffect(() => {
@@ -197,6 +107,9 @@ const BookingPage = () => {
     try {
       setIsSearching(true);
       setError(null);
+      setRecommendations([]);
+      setTransferStats(null);
+      setNearbyStops([]);
       
       console.log('Sending search params:', {
         fromStopId: bookingForm.fromStopId,
@@ -211,7 +124,6 @@ const BookingPage = () => {
         preferredCriteria: bookingForm.preferredCriteria || 'fastest'
       });
       
-      setIsUsingMockData(false);
       console.log('Search response:', response.data);
       
       if (response.data && response.data.success === true) {
@@ -295,8 +207,7 @@ const BookingPage = () => {
         fromStopId: bookingForm.fromStopId,
         toStopId: bookingForm.toStopId,
         fare: selectedRoute.fare,
-        departureTime: selectedRoute.departureTime,
-        isPeakHour: selectedRoute.isPeakHour
+        departureTime: selectedRoute.departureTime ? new Date(selectedRoute.departureTime).toISOString() : new Date().toISOString(),
       };
       
       // Add transfer information for multi-leg journeys
@@ -339,7 +250,10 @@ const BookingPage = () => {
   
   // Handle route selection
   const handleSelectRoute = (route) => {
-    setSelectedRoute(route);
+    setSelectedRoute({
+      ...route,
+      selectedDeparture: selectedDepartureTimes[route.routeId] || (route.upcomingDepartureTimes && route.upcomingDepartureTimes.length > 0 ? `${route.upcomingDepartureTimes[0].day}|${route.upcomingDepartureTimes[0].time}` : null)
+    });
   };
   
   // Format money amount
@@ -395,29 +309,10 @@ const BookingPage = () => {
           </div>
         </div>
 
-        {isUsingMockData && (
-          <div className="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong>Using demo data.</strong> The system is currently running in offline mode with sample routes.
-            <button 
-              type="button" 
-              className="btn-close" 
-              onClick={() => setIsUsingMockData(false)}
-              aria-label="Close"
-            ></button>
-          </div>
-        )}
-
         {error && (
           <div className="alert alert-danger alert-dismissible fade show" role="alert">
             {error}
             <div className="mt-2">
-              <button 
-                type="button" 
-                className="btn btn-sm btn-outline-light me-2" 
-                onClick={() => handleSearch(null)}
-              >
-                Use Demo Data
-              </button>
               <button 
                 type="button" 
                 className="btn-close" 
@@ -486,8 +381,6 @@ const BookingPage = () => {
                     </select>
                   </div>
                   
-                  
-                  
                   <button 
                     type="submit" 
                     className="btn btn-primary w-100"
@@ -538,56 +431,6 @@ const BookingPage = () => {
               </div>
             )}
             
-            {/* Transfer Benefits Info */}
-            {transferStats && (
-              <div className="card mt-4">
-                <div className="card-header bg-info text-white">
-                  <h5 className="mb-0">Transfer Benefits</h5>
-                </div>
-                <div className="card-body">
-                  <p className="text-muted small mb-2">
-                    <i className="bi bi-info-circle me-1"></i>
-                    Transferring between routes can save you time and points
-                  </p>
-                  
-                  <div className="mb-3">
-                    <div className="d-flex align-items-center mb-1">
-                      <i className="bi bi-clock text-primary me-2"></i>
-                      <span>Average time saved: <strong>{transferStats.averageTimeSaved} minutes</strong></span>
-                    </div>
-                  </div>
-                  
-                  <p className="mb-2 small fw-bold">Popular Transfer Points:</p>
-                  <ul className="list-group list-group-flush mb-3">
-                    {transferStats.popularTransferPoints.map((point, idx) => (
-                      <li key={idx} className="list-group-item py-2 px-0 border-0">
-                        <div className="d-flex align-items-center">
-                          <i className="bi bi-arrow-left-right text-success me-2"></i>
-                          <div>
-                            <span className="fw-medium">{point.name}</span>
-                            <span className={`ms-2 badge ${
-                              point.popularity === 'high' ? 'bg-success' : 
-                              point.popularity === 'medium' ? 'bg-info' : 'bg-secondary'
-                            }`}>{point.popularity}</span>
-                          </div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <div className="text-muted small">
-                    <p className="mb-1">
-                      <i className="bi bi-check-circle-fill text-success me-1"></i>
-                      One-ticket system for all transfers
-                    </p>
-                    <p className="mb-0">
-                      <i className="bi bi-check-circle-fill text-success me-1"></i>
-                      No additional fare charges for transfers
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
           
           <div className="col-lg-8">
@@ -664,10 +507,7 @@ const BookingPage = () => {
                                   {typeof route.fromStop === 'object' ? route.fromStop.name : 'Loading...'}
                                 </h6>
                                 <small className="text-muted">
-                                  {new Date(route.departureTime).toLocaleTimeString([], { 
-                                    hour: '2-digit', 
-                                    minute: '2-digit' 
-                                  })}
+                                Departure: {route.departureTime ? new Date(route.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
                                 </small>
                               </div>
                               
@@ -695,10 +535,7 @@ const BookingPage = () => {
                                   {typeof route.toStop === 'object' ? route.toStop.name : 'Loading...'}
                                 </h6>
                                 <small className="text-muted">
-                                  {new Date(route.arrivalTime).toLocaleTimeString([], { 
-                                    hour: '2-digit', 
-                                    minute: '2-digit' 
-                                  })}
+                                  Arrival: {route.arrivalTime ? new Date(route.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
                                 </small>
                               </div>
                             </div>
@@ -811,14 +648,16 @@ const BookingPage = () => {
                           <p><strong>From:</strong> {selectedRoute.fromStop.name}</p>
                           <p><strong>To:</strong> {selectedRoute.toStop.name}</p>
                           <p>
-                            <strong>Departure:</strong> {' '}
-                            {new Date(selectedRoute.departureTime).toLocaleString([], {
-                              weekday: 'short',
-                              month: 'short', 
-                              day: 'numeric',
-                              hour: '2-digit', 
-                              minute: '2-digit'
-                            })}
+                            <strong>Departure:</strong>{' '}
+                            {selectedRoute && selectedRoute.departureTime
+                              ? new Date(selectedRoute.departureTime).toLocaleString([], {
+                                  weekday: 'short',
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })
+                              : 'N/A'}
                           </p>
                           
                           {!selectedRoute.directRoute && (

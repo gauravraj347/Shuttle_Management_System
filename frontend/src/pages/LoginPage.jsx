@@ -78,7 +78,7 @@ const LoginPage = () => {
                         className="form-control border-start-0 ps-0"
                         id="email"
                         name="email"
-                        placeholder="email@bennett.edu.in"
+                        placeholder="email@@college.com"
                         value={formData.email}
                         onChange={handleChange}
                         required
@@ -89,7 +89,7 @@ const LoginPage = () => {
                   <div className="mb-4">
                     <div className="d-flex justify-content-between">
                       <label htmlFor="password" className="form-label">Password</label>
-                      <a href="#" className="small text-decoration-none">Forgot password?</a>
+{/*                       <a href="#" className="small text-decoration-none">Forgot password?</a> */}
                     </div>
                     <div className="input-group">
                       <span className="input-group-text bg-light border-end-0">

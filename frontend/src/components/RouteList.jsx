@@ -29,19 +29,6 @@ const RouteList = ({ routes }) => {
                   <i className="bi bi-geo-alt me-1"></i>
                   {Array.isArray(route.stops) ? route.stops.length : 0} Stops
                 </small>
-                {route.optimizationFactors && (
-                  <div className="mt-2">
-                    {route.optimizationFactors.peakHours && (
-                      <span className="badge bg-info me-2">Peak Hours</span>
-                    )}
-                    {route.optimizationFactors.classSchedules && (
-                      <span className="badge bg-info me-2">Class Schedules</span>
-                    )}
-                    {route.optimizationFactors.demandAnalysis && (
-                      <span className="badge bg-info me-2">Demand Analysis</span>
-                    )}
-                  </div>
-                )}
               </div>
               <Link to={`/routes/${route._id}`} className="btn btn-primary btn-sm">
                 View Details
