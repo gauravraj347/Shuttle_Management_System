@@ -1,20 +1,20 @@
-# 🚍 Shuttle Management System
+# Shuttle Management System
 
 A comprehensive web application for managing university shuttle services, bookings, and a student wallet system.
 
 ---
 
-## ✨ Features
+## Features
 
-- 🔐 User Authentication (Student, Admin)
-- 🗺️ Route and Stop Management
-- 🚌 Shuttle Booking System
-- 💰 Student Wallet System with Points Allocation
-- 📊 Admin Dashboard with Management Tools
+- User Authentication (Student, Admin)
+- Route and Stop Management
+- Shuttle Booking System
+- Student Wallet System with Points Allocation
+- Admin Dashboard with Management Tools
 
 ---
 
-### 🚀 Installation
+### Installation
 
 1. **Clone the Repository**
 
@@ -47,29 +47,29 @@ A comprehensive web application for managing university shuttle services, bookin
 
 ---
 
-## 🌐 Access the Application
+## Access the Application
 
 - **Frontend**: [http://localhost:3000](http://localhost:3000)
 - **Backend API**: [http://localhost:5000](http://localhost:5000)
 
-## 🧑‍💼 Admin Dashboard Features
+## Admin Dashboard Features
 
-### 1. 🚏 Routes Management
+### 1. Routes Management
 
 - Create, edit, delete routes
 - View associated stops and route details
 
-### 2. 🛑 Stops Management
+### 2. Stops Management
 
 - Add, update, remove shuttle stops
 - Define coordinates and stop types
 
-### 3. 👨‍🎓 Student Management
+### 3. Student Management
 
 - View all students and wallet balances
 - Search and filter student records
 
-### 4. 💳 Wallet Management
+### 4. Wallet Management
 
 - Allocate monthly or semester points to students
 - Distribute bonuses (festivals, events, etc.)
